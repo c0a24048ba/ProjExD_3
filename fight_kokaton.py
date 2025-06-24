@@ -141,6 +141,7 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
 
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -196,6 +197,7 @@ def main():
         pg.display.update()
         tmr += 1
         clock.tick(50)
+
 
 if __name__ == "__main__":
     pg.init()
