@@ -205,7 +205,7 @@ class Explosion:
     def __init__(self, center: tuple[int, int]):
         """
         引数に基づき爆発エフェクトを生成する関数
-        引数 pos：爆発エフェクトの位置座標タプル
+        引数 center：爆発エフェクトの中心座標タプル
         戻り値：なし
         """
         img = pg.image.load("fig/explosion.gif")
