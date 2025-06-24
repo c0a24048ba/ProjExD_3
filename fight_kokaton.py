@@ -174,6 +174,34 @@ class Score:
       """
         self.score += point
 
+class Explosion:
+    """
+    爆発エフェクトに関するクラス
+    """
+    def __init__(self, center: tuple[int, int]):
+        """
+        引数に基づき爆発エフェクトを生成する
+        引数 pos：爆発エフェクトの位置座標タプル
+        戻り値：なし
+        """
+        img = pg.image.load("fig/explosion.gif")
+        flip_img = pg.transform.flip(img, True, False)
+        self.images = [img, flip_img]
+        self.rct = img.get_rect()
+        self.rct.center = center
+        self.life = 10
+
+    def update(self, screen: pg.Surface):
+        """
+        爆発エフェクトを画面に描画する
+        引数 screen：画面Surface
+        戻り値：なし
+        """
+        self.life -= 1
+        if self.life > 0:
+            img = self.images[self.life % 2]  # lifeが奇数か偶数かで画像切替
+            screen.blit(img, self.rct)
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
@@ -181,6 +209,7 @@ def main():
     bird = Bird((300, 200))
     score=Score()  # スコアのインスタンスを生成
     beams=[]# ビームのリストを初期化
+    explosions=[]  # 爆発エフェクトのリストを初期化
     # bomb = Bomb((255, 0, 0), 10)
     # bombs=[]
     # for _ in range(NUM_OF_BOMBS):
@@ -221,14 +250,13 @@ def main():
         for beam in beams:
             for i, bomb in enumerate(bombs):
                 if bomb is not None and beam is not None and beam.rct.colliderect(bomb.rct):
+                    explosions.append(Explosion(bomb.rct.center))#爆発追加
                     bombs[i] = None
                     beams[beams.index(beam)] = None
                     bird.change_img(6, screen)
                     score.increment() 
-
-
+        beams = [beam for beam in beams if beam is not None and beam.rct.left <= WIDTH]  # ビームリストからNoneと画面外のビームを除去
         bombs = [bomb for bomb in bombs if bomb is not None]  # 爆弾リストからNoneを除去
-
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for beam in beams:
@@ -236,6 +264,9 @@ def main():
                 beam.update(screen)
         for bomb in bombs:# 爆弾が存在する場合のみ更新   
             bomb.update(screen)
+        explosions = [ex for ex in explosions if ex.life > 0]# 爆発エフェクトの描画・更新
+        for ex in explosions:
+            ex.update(screen)  
         score.update(screen)# スコアを表示
         pg.display.update()
         tmr += 1
