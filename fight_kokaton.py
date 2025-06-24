@@ -3,6 +3,7 @@ import random
 import sys
 import time
 import pygame as pg
+import math
 
 
 WIDTH = 1100  # ゲームウィンドウの幅
@@ -52,16 +53,19 @@ class Bird:
         """
         こうかとん画像Surfaceを生成する
         引数 xy：こうかとん画像の初期位置座標タプル
+        戻り値：なし
         """
         self.img = __class__.imgs[(+5, 0)]
         self.rct: pg.Rect = self.img.get_rect()
         self.rct.center = xy
+        self.dire=(+5,0) # 初期方向は右向き
 
     def change_img(self, num: int, screen: pg.Surface):
         """
         こうかとん画像を切り替え，画面に転送する
         引数1 num：こうかとん画像ファイル名の番号
         引数2 screen：画面Surface
+        戻り値：なし
         """
         self.img = pg.transform.rotozoom(pg.image.load(f"fig/{num}.png"), 0, 0.9)
         screen.blit(self.img, self.rct)
@@ -71,6 +75,7 @@ class Bird:
         押下キーに応じてこうかとんを移動させる
         引数1 key_lst：押下キーの真理値リスト
         引数2 screen：画面Surface
+        戻り値：なし
         """
         sum_mv = [0, 0]
         for k, mv in __class__.delta.items():
@@ -81,6 +86,7 @@ class Bird:
         if check_bound(self.rct) != (True, True):
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
+            self.dire=tuple(sum_mv)  # 向き更新
             self.img = __class__.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
 
@@ -93,17 +99,31 @@ class Beam:
         """
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん（Birdインスタンス）
+        戻り値：なし
         """
         self.img = pg.image.load("fig/beam.png")
         self.rct = self.img.get_rect()
         self.rct.centery = bird.rct.centery
         self.rct.left = bird.rct.right  # ビームの左座標＝こうかとんの右座標
-        self.vx, self.vy = +5, 0
+        self.vx, self.vy = bird.dire
+
+        # ビーム画像の読み込みと回転処理
+        raw_img = pg.image.load("fig/beam.png")
+        theta = math.atan2(-self.vy, self.vx)  # y軸反転（pygame座標系）
+        deg = math.degrees(theta)
+        self.img = pg.transform.rotozoom(raw_img, deg, 1.0)
+
+        self.rct = self.img.get_rect()
+
+        # ビームの初期位置：こうかとんの中心＋補正
+        self.rct.centerx = bird.rct.centerx + bird.rct.width * self.vx // 5
+        self.rct.centery = bird.rct.centery + bird.rct.height * self.vy // 5
 
     def update(self, screen: pg.Surface):
         """
         ビームを速度ベクトルself.vx, self.vyに基づき移動させる
         引数 screen：画面Surface
+        戻り値：なし
         """
         if check_bound(self.rct) == (True, True):
             self.rct.move_ip(self.vx, self.vy)
@@ -119,6 +139,7 @@ class Bomb:
         引数に基づき爆弾円Surfaceを生成する
         引数1 color：爆弾円の色タプル
         引数2 rad：爆弾円の半径
+        戻り値：なし
         """
         self.img = pg.Surface((2*rad, 2*rad))
         pg.draw.circle(self.img, color, (rad, rad), rad)
@@ -131,6 +152,7 @@ class Bomb:
         """
         爆弾を速度ベクトルself.vx, self.vyに基づき移動させる
         引数 screen：画面Surface
+        戻り値：なし
         """
         yoko, tate = check_bound(self.rct)
         if not yoko:
@@ -139,6 +161,7 @@ class Bomb:
             self.vy *= -1
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
+
 
 class Score:
     """
@@ -174,6 +197,7 @@ class Score:
       """
         self.score += point
 
+
 class Explosion:
     """
     爆発エフェクトに関するクラス
@@ -203,6 +227,7 @@ class Explosion:
             screen.blit(img, self.rct)
         else:
             self.rct = None
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -240,7 +265,6 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
-        
         # if beam is not None:
         # for i,bomb in enumerate(bombs):
         #     if beam is not None:
@@ -257,6 +281,7 @@ def main():
                     beams[beams.index(beam)] = None
                     bird.change_img(6, screen)
                     score.increment() 
+
         beams = [beam for beam in beams if beam is not None and beam.rct.left <= WIDTH]  # ビームリストからNoneと画面外のビームを除去
         bombs = [bomb for bomb in bombs if bomb is not None]  # 爆弾リストからNoneを除去
         key_lst = pg.key.get_pressed()
