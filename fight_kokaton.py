@@ -237,10 +237,12 @@ def main():
     score=Score()  # スコアのインスタンスを生成
     beams=[]# ビームのリストを初期化
     explosions=[]  # 爆発エフェクトのリストを初期化
+
     # bomb = Bomb((255, 0, 0), 10)
     # bombs=[]
     # for _ in range(NUM_OF_BOMBS):
     #     bombs.append(Bomb((255, 0, 0), 10))  # 赤い爆弾を生成
+
     bombs=[Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]  # 赤い爆弾を生成
     beam = None  # ゲーム初期化時にはビームは存在しない
     clock = pg.time.Clock()
@@ -265,6 +267,7 @@ def main():
                 pg.display.update()
                 time.sleep(1)
                 return
+            
         # if beam is not None:
         # for i,bomb in enumerate(bombs):
         #     if beam is not None:
@@ -273,6 +276,7 @@ def main():
         #             bombs[i]=None
         #             bird.change_img(6, screen)
         #             score.increment()#スコア加算
+        
         for beam in beams:
             for i, bomb in enumerate(bombs):
                 if bomb is not None and beam is not None and beam.rct.colliderect(bomb.rct):
