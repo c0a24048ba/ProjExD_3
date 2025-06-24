@@ -51,7 +51,7 @@ class Bird:
 
     def __init__(self, xy: tuple[int, int]):
         """
-        こうかとん画像Surfaceを生成する
+        こうかとん画像Surfaceを生成する関数
         引数 xy：こうかとん画像の初期位置座標タプル
         戻り値：なし
         """
@@ -62,7 +62,7 @@ class Bird:
 
     def change_img(self, num: int, screen: pg.Surface):
         """
-        こうかとん画像を切り替え，画面に転送する
+        こうかとん画像を切り替え，画面に転送する関数
         引数1 num：こうかとん画像ファイル名の番号
         引数2 screen：画面Surface
         戻り値：なし
@@ -72,7 +72,7 @@ class Bird:
 
     def update(self, key_lst: list[bool], screen: pg.Surface):
         """
-        押下キーに応じてこうかとんを移動させる
+        押下キーに応じてこうかとんを移動させる関数
         引数1 key_lst：押下キーの真理値リスト
         引数2 screen：画面Surface
         戻り値：なし
@@ -97,7 +97,7 @@ class Beam:
     """
     def __init__(self, bird:"Bird"):
         """
-        ビーム画像Surfaceを生成する
+        ビーム画像Surfaceを生成する関数
         引数 bird：ビームを放つこうかとん（Birdインスタンス）
         戻り値：なし
         """
@@ -121,7 +121,7 @@ class Beam:
 
     def update(self, screen: pg.Surface):
         """
-        ビームを速度ベクトルself.vx, self.vyに基づき移動させる
+        ビームを速度ベクトルself.vx, self.vyに基づき移動させる関数
         引数 screen：画面Surface
         戻り値：なし
         """
@@ -136,7 +136,7 @@ class Bomb:
     """
     def __init__(self, color: tuple[int, int, int], rad: int):
         """
-        引数に基づき爆弾円Surfaceを生成する
+        引数に基づき爆弾円Surfaceを生成する関数
         引数1 color：爆弾円の色タプル
         引数2 rad：爆弾円の半径
         戻り値：なし
@@ -150,7 +150,7 @@ class Bomb:
 
     def update(self, screen: pg.Surface):
         """
-        爆弾を速度ベクトルself.vx, self.vyに基づき移動させる
+        爆弾を速度ベクトルself.vx, self.vyに基づき移動させる関数
         引数 screen：画面Surface
         戻り値：なし
         """
@@ -169,7 +169,7 @@ class Score:
     """
     def __init__(self):
         """ 
-        スコアの初期化とフォント設定を行う
+        スコアの初期化とフォント設定を行う関数
         引数：なし
         戻り値：なし
         """
@@ -182,7 +182,7 @@ class Score:
 
     def update(self, screen: pg.Surface):
         """
-        現在のスコアを描画する
+        現在のスコアを描画する関数
         引数screen：画面Surface
         戻り値：なし
         """
@@ -191,7 +191,7 @@ class Score:
 
     def increment(self, point=1):
         """
-        スコアを加算する
+        スコアを加算する関数
         引数 point：加算するスコアの値
         戻り値：なし
       """
@@ -204,7 +204,7 @@ class Explosion:
     """
     def __init__(self, center: tuple[int, int]):
         """
-        引数に基づき爆発エフェクトを生成する
+        引数に基づき爆発エフェクトを生成する関数
         引数 pos：爆発エフェクトの位置座標タプル
         戻り値：なし
         """
@@ -217,7 +217,7 @@ class Explosion:
 
     def update(self, screen: pg.Surface):
         """
-        爆発エフェクトを画面に描画する
+        爆発エフェクトを画面に描画する関数
         引数 screen：画面Surface
         戻り値：なし
         """
@@ -276,7 +276,7 @@ def main():
         #             bombs[i]=None
         #             bird.change_img(6, screen)
         #             score.increment()#スコア加算
-        
+
         for beam in beams:
             for i, bomb in enumerate(bombs):
                 if bomb is not None and beam is not None and beam.rct.colliderect(bomb.rct):
