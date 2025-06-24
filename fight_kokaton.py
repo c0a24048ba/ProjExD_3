@@ -201,6 +201,8 @@ class Explosion:
         if self.life > 0:
             img = self.images[self.life % 2]  # lifeが奇数か偶数かで画像切替
             screen.blit(img, self.rct)
+        else:
+            self.rct = None
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
